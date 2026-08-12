@@ -1,0 +1,216 @@
+openapi: 3.1.0
+info:
+  title: rostack_v1 Read-Only JSON API
+  version: 2026-08-13
+  license:
+    name: MIT
+    identifier: MIT
+  description: >-
+    Generic contract for discovery and implementation-defined read-only JSON
+    resources. Concrete resource paths and schemas are supplied by discovery.
+servers:
+  - url: https://{host}
+    variables:
+      host:
+        default: api.invalid
+        description: Use the JSON API host advertised by discovery.
+paths:
+  /.well-known/rostack:
+    get:
+      summary: Discover an implementation
+      operationId: discoverRostack
+      security: []
+      responses:
+        "200":
+          description: Implementation discovery document
+          headers:
+            ETag:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: ../schemas/discovery.schema.json
+        "401":
+          $ref: "#/components/responses/Problem"
+  /{resource}:
+    get:
+      summary: List records from a discovered resource
+      operationId: listResource
+      description: >-
+        Illustrative generic collection route. Use the collection URL from
+        discovery; implementations are not required to use this path shape.
+      security:
+        - oauth2: []
+        - sharedToken: []
+      parameters:
+        - $ref: "#/components/parameters/Resource"
+        - $ref: "#/components/parameters/Filter"
+        - $ref: "#/components/parameters/Sort"
+        - $ref: "#/components/parameters/Fields"
+        - $ref: "#/components/parameters/Limit"
+        - $ref: "#/components/parameters/Cursor"
+      responses:
+        "200":
+          description: Page of implementation-defined records
+          headers:
+            X-Rostack-Protocol-Version:
+              schema:
+                const: rostack_v1
+            X-Rostack-API-Version:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Collection"
+        "400":
+          $ref: "#/components/responses/Problem"
+        "401":
+          $ref: "#/components/responses/Problem"
+        "403":
+          $ref: "#/components/responses/Problem"
+        "406":
+          $ref: "#/components/responses/Problem"
+  /{resource}/{id}:
+    get:
+      summary: Retrieve one record from a discovered resource
+      operationId: getResource
+      description: >-
+        Illustrative generic item route. Use the item URL template from
+        discovery; implementations are not required to use this path shape.
+      security:
+        - oauth2: []
+        - sharedToken: []
+      parameters:
+        - $ref: "#/components/parameters/Resource"
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        - $ref: "#/components/parameters/Fields"
+      responses:
+        "200":
+          description: Implementation-defined record matching a discovered schema
+          headers:
+            ETag:
+              schema:
+                type: string
+            X-Rostack-Protocol-Version:
+              schema:
+                const: rostack_v1
+            X-Rostack-API-Version:
+              schema:
+                type: string
+          content:
+            application/json:
+              schema: {}
+        "401":
+          $ref: "#/components/responses/Problem"
+        "403":
+          $ref: "#/components/responses/Problem"
+        "404":
+          $ref: "#/components/responses/Problem"
+components:
+  securitySchemes:
+    oauth2:
+      type: oauth2
+      description: Concrete authorization endpoints and scopes are in discovery.
+      flows:
+        authorizationCode:
+          authorizationUrl: https://auth.example.com/authorize
+          tokenUrl: https://auth.example.com/token
+          scopes: {}
+    sharedToken:
+      type: apiKey
+      in: header
+      name: Authorization
+      description: >-
+        Send `Authorization: Rostack-Token SHARED_TOKEN`. The custom
+        authorization scheme is represented as apiKey because OpenAPI's http
+        security scheme only defines registered HTTP authentication schemes.
+  parameters:
+    Resource:
+      name: resource
+      in: path
+      required: true
+      schema:
+        type: string
+    Filter:
+      name: filter
+      in: query
+      description: Percent-encoded JSON matching filter.schema.json.
+      schema:
+        type: string
+    Sort:
+      name: sort
+      in: query
+      schema:
+        type: string
+    Fields:
+      name: fields
+      in: query
+      schema:
+        type: string
+    Limit:
+      name: limit
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+    Cursor:
+      name: cursor
+      in: query
+      schema:
+        type: string
+  responses:
+    Problem:
+      description: Problem details
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/Problem"
+  schemas:
+    Collection:
+      type: object
+      additionalProperties: false
+      required: [items, page]
+      properties:
+        items:
+          type: array
+          items: true
+        page:
+          type: object
+          additionalProperties: false
+          required: [next_cursor, has_more]
+          properties:
+            next_cursor:
+              type: [string, "null"]
+            has_more:
+              type: boolean
+            event_cursor:
+              type: string
+              description: >-
+                Exclusive, resource-wide event boundary for this consistent
+                snapshot. Required for resources that advertise events.
+    Problem:
+      type: object
+      required: [type, title, status]
+      properties:
+        type:
+          type: string
+          format: uri-reference
+        title:
+          type: string
+        status:
+          type: integer
+          minimum: 100
+          maximum: 599
+        detail:
+          type: string
+        instance:
+          type: string
+          format: uri-reference
+        request_id:
+          type: string

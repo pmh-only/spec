@@ -4,6 +4,10 @@ This repository contains documentation and specification artifacts for multiple,
 independently released APIs. Releases use calendar dates and are immutable once
 published.
 
+The documentation site and canonical specification origin are available at
+[spec.pmh.codes](https://spec.pmh.codes/). Repository content is licensed under
+the [MIT License](LICENSE).
+
 ## Layout
 
 ```text

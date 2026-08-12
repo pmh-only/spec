@@ -5,7 +5,7 @@ import process from 'node:process';
 const root = process.cwd();
 const output = path.join(root, '_site');
 const publishedDirectories = ['apis', 'docs', 'templates'];
-const publishedRootFiles = ['README.md', 'CONTRIBUTING.md', 'SECURITY.md', 'CODE_OF_CONDUCT.md', 'AGENTS.md'];
+const publishedRootFiles = ['README.md', 'LICENSE', 'CONTRIBUTING.md', 'SECURITY.md', 'CODE_OF_CONDUCT.md', 'AGENTS.md'];
 
 await rm(output, { recursive: true, force: true });
 await mkdir(output, { recursive: true });
@@ -18,6 +18,8 @@ await cp(path.join(root, 'site'), output, { recursive: true });
 for (const file of publishedRootFiles) {
   await cp(path.join(root, file), path.join(output, file));
 }
+const license = await readFile(path.join(root, 'LICENSE'), 'utf8');
+await writeFile(path.join(output, 'LICENSE.md'), `# MIT License\n\n\`\`\`text\n${license.trimEnd()}\n\`\`\`\n`);
 await writeFile(path.join(output, '.nojekyll'), '');
 
 const allFiles = await walk(output);
@@ -71,6 +73,7 @@ async function createSidebar() {
     '- [Contributing](/CONTRIBUTING.md)',
     '- [Security](/SECURITY.md)',
     '- [Code of Conduct](/CODE_OF_CONDUCT.md)',
+    '- [MIT License](/LICENSE.md)',
     '- Repository guide',
     '  - [Conventions](/docs/repository-conventions.md)',
     '  - [Versioning](/docs/versioning.md)',

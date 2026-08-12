@@ -14,4 +14,5 @@ and follow event detail URLs to retrieve authoritative records.
 
 | Release | Status | Compatibility | Notes |
 | --- | --- | --- | --- |
+| [2026-08-13](releases/2026-08-13/) | Draft | Breaking | Canonical schema identifiers migrate to `spec.pmh.codes` |
 | [2026-08-12](releases/2026-08-12/) | Current | Initial protocol | Discovery, JSON API, filtering, OAuth 2.0 or shared-token auth, and WebSocket gateway |

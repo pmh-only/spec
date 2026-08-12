@@ -1,0 +1,221 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://spec.pmh.codes/apis/rostack_v1/releases/2026-08-13/schemas/discovery.schema.json",
+  "title": "rostack_v1 discovery document",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["protocol", "implementation", "endpoints", "authentication", "capabilities", "resources"],
+  "properties": {
+    "protocol": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "version"],
+      "properties": {
+        "name": {"const": "rostack"},
+        "version": {"const": "rostack_v1"}
+      }
+    },
+    "implementation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name", "api_version"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1},
+        "name": {"type": "string", "minLength": 1},
+        "api_version": {"type": "string", "minLength": 1},
+        "documentation_url": {"type": "string", "format": "uri"}
+      }
+    },
+    "endpoints": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["discovery", "json_api", "websocket"],
+      "properties": {
+        "discovery": {"type": "string", "format": "uri", "pattern": "^https://"},
+        "json_api": {"type": "string", "format": "uri", "pattern": "^https://"},
+        "websocket": {"type": "string", "format": "uri", "pattern": "^wss://"}
+      }
+    },
+    "authentication": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["methods", "permissions"],
+      "properties": {
+        "discovery_public": {"type": "boolean", "default": true},
+        "methods": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "oneOf": [
+              {"$ref": "#/$defs/oauth2Authentication"},
+              {"$ref": "#/$defs/sharedTokenAuthentication"}
+            ]
+          }
+        },
+        "permissions": {
+          "type": "object",
+          "minProperties": 1,
+          "additionalProperties": {"type": "string"}
+        }
+      }
+    },
+    "capabilities": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["filter_operators", "max_page_size", "websocket"],
+      "properties": {
+        "filter_operators": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"enum": ["eq", "ne", "gt", "gte", "lt", "lte", "in", "nin", "contains", "starts_with", "ends_with", "exists"]}
+        },
+        "max_page_size": {"type": "integer", "minimum": 1},
+        "websocket": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["event_encodings", "extensions", "authentication_timeout_ms", "heartbeat_interval_ms", "heartbeat_timeout_ms", "reconnect_min_delay_ms", "reconnect_max_delay_ms", "discovery_refresh_after_ms"],
+          "properties": {
+            "event_encodings": {
+              "type": "array",
+              "minItems": 1,
+              "uniqueItems": true,
+              "contains": {"const": "json"},
+              "items": {"enum": ["json", "compact-json"]}
+            },
+            "extensions": {
+              "type": "array",
+              "uniqueItems": true,
+              "items": {"enum": ["permessage-deflate"]}
+            },
+            "authentication_timeout_ms": {"type": "integer", "minimum": 1000},
+            "heartbeat_interval_ms": {"type": "integer", "minimum": 1000},
+            "heartbeat_timeout_ms": {"type": "integer", "minimum": 1000},
+            "reconnect_min_delay_ms": {"type": "integer", "minimum": 100},
+            "reconnect_max_delay_ms": {"type": "integer", "minimum": 1000},
+            "discovery_refresh_after_ms": {"type": "integer", "minimum": 1000}
+          }
+        }
+      }
+    },
+    "resources": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/resource"}
+    },
+    "alternate_versions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["api_version", "discovery_url"],
+        "properties": {
+          "api_version": {"type": "string", "minLength": 1},
+          "discovery_url": {"type": "string", "format": "uri", "pattern": "^https://"}
+        }
+      }
+    }
+  },
+  "$defs": {
+    "oauth2Authentication": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "authorization_server_metadata"],
+      "properties": {
+        "type": {"const": "oauth2"},
+        "authorization_server_metadata": {"type": "string", "format": "uri", "pattern": "^https://"}
+      }
+    },
+    "sharedTokenAuthentication": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "http_authorization_scheme", "provisioning"],
+      "properties": {
+        "type": {"const": "shared_token"},
+        "http_authorization_scheme": {"const": "Rostack-Token"},
+        "provisioning": {"const": "out_of_band"},
+        "description": {"type": "string"}
+      }
+    },
+    "resource": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "collection_url", "item_url_template", "representations", "events", "filtering", "read_permissions", "subscribe_permissions"],
+      "properties": {
+        "name": {"type": "string", "pattern": "^[a-z][a-z0-9-]*$"},
+        "description": {"type": "string"},
+        "collection_url": {"type": "string", "format": "uri", "pattern": "^https://"},
+        "item_url_template": {"type": "string", "pattern": "^https://.*\\{id\\}"},
+        "representations": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"$ref": "#/$defs/representation"}
+        },
+        "events": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/eventDescriptor"}
+        },
+        "event_filtering": {"type": "boolean", "default": false},
+        "filtering": {"$ref": "#/$defs/filtering"},
+        "read_permissions": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        },
+        "subscribe_permissions": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "eventDescriptor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "schema_url", "schema_dialect", "state_transition"],
+      "properties": {
+        "name": {"type": "string", "pattern": "^[a-z][a-z0-9.-]*$"},
+        "schema_url": {"type": "string", "format": "uri", "pattern": "^https://"},
+        "schema_dialect": {"type": "string", "format": "uri"},
+        "description": {"type": "string"},
+        "state_transition": {"enum": ["create", "update", "delete"]},
+        "tombstone": {"type": "boolean", "default": false}
+      }
+    },
+    "representation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["media_type", "schema_url", "schema_dialect"],
+      "properties": {
+        "media_type": {"type": "string", "pattern": "^[^/ ]+/[^/ ]+$"},
+        "schema_url": {"type": "string", "format": "uri", "pattern": "^https://"},
+        "schema_dialect": {"type": "string", "format": "uri"},
+        "description": {"type": "string"}
+      }
+    },
+    "filtering": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["filterable_fields", "sortable_fields"],
+      "properties": {
+        "filterable_fields": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {"enum": ["eq", "ne", "gt", "gte", "lt", "lte", "in", "nin", "contains", "starts_with", "ends_with", "exists"]}
+          },
+          "propertyNames": {"pattern": "^/"}
+        },
+        "sortable_fields": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"type": "string", "pattern": "^/"}
+        }
+      }
+    }
+  }
+}
