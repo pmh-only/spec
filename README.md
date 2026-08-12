@@ -56,11 +56,12 @@ Report vulnerabilities privately using the process in [SECURITY.md](SECURITY.md)
 
 ## Documentation Site
 
-GitHub Pages publishes the entire repository as a searchable documentation site:
+GitHub Pages publishes the repository through a custom static HTML generator:
 
-- Markdown files render as documentation pages.
-- JSON and YAML artifacts have syntax-highlighted source pages and raw downloads.
-- Navigation is generated from API and dated release directories.
+- Markdown files render as self-contained, W3C-inspired specification pages.
+- Release pages use distinct draft, current, deprecated, and retired treatments.
+- JSON and YAML artifacts have readable source pages and raw downloads.
+- Navigation, contents, and search data are generated at build time.
 - Templates are included for implementers creating new APIs.
 
 Build the site locally with:
