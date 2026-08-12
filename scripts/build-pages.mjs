@@ -5,6 +5,7 @@ import process from 'node:process';
 const root = process.cwd();
 const output = path.join(root, '_site');
 const publishedDirectories = ['apis', 'docs', 'templates'];
+const publishedRootFiles = ['README.md', 'CONTRIBUTING.md', 'SECURITY.md', 'CODE_OF_CONDUCT.md', 'AGENTS.md'];
 
 await rm(output, { recursive: true, force: true });
 await mkdir(output, { recursive: true });
@@ -14,7 +15,9 @@ for (const directory of publishedDirectories) {
 }
 
 await cp(path.join(root, 'site'), output, { recursive: true });
-await cp(path.join(root, 'README.md'), path.join(output, 'README.md'));
+for (const file of publishedRootFiles) {
+  await cp(path.join(root, file), path.join(output, file));
+}
 await writeFile(path.join(output, '.nojekyll'), '');
 
 const allFiles = await walk(output);
@@ -65,9 +68,15 @@ async function createSidebar() {
   const lines = [
     '- [Home](/README.md)',
     '- [API index](/apis/README.md)',
+    '- [Contributing](/CONTRIBUTING.md)',
+    '- [Security](/SECURITY.md)',
+    '- [Code of Conduct](/CODE_OF_CONDUCT.md)',
     '- Repository guide',
     '  - [Conventions](/docs/repository-conventions.md)',
-    '  - [Versioning](/docs/versioning.md)'
+    '  - [Versioning](/docs/versioning.md)',
+    '  - [Modification protocol](/docs/specification-modification-protocol.md)',
+    '  - [Security review](/docs/security-review.md)',
+    '  - [Agent instructions](/AGENTS.md)'
   ];
   const apiRoot = path.join(output, 'apis');
   const apiEntries = await readdir(apiRoot, { withFileTypes: true });

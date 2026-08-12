@@ -41,6 +41,15 @@ examples.
 
 See `docs/repository-conventions.md` and `docs/versioning.md` before publishing.
 
+## Contributing
+
+Read [CONTRIBUTING.md](CONTRIBUTING.md) and the
+[specification modification protocol](docs/specification-modification-protocol.md)
+before proposing or implementing changes. Published dated releases are immutable;
+corrections and protocol changes are published as new releases.
+All project participation is governed by the [Code of Conduct](CODE_OF_CONDUCT.md).
+Report vulnerabilities privately using the process in [SECURITY.md](SECURITY.md).
+
 ## Documentation Site
 
 GitHub Pages publishes the entire repository as a searchable documentation site:

@@ -1,0 +1,113 @@
+name: Specification change proposal
+description: Propose new, changed, deprecated, or removed API behavior.
+title: "[Spec change]: "
+labels:
+  - specification
+  - proposal
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Read the [specification modification protocol](https://github.com/pmh-only/spec/blob/main/docs/specification-modification-protocol.md) before proposing a change. Do not include credentials, private endpoints, or undisclosed vulnerabilities.
+
+  - type: input
+    id: api
+    attributes:
+      label: API and release
+      description: Identify the API and latest affected dated release.
+      placeholder: "rostack_v1, 2026-08-12"
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: Describe the interoperability or implementation problem using observable behavior.
+      placeholder: Explain who is affected, under what conditions, and why the current contract is insufficient.
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed behavior
+      description: State the proposed normative behavior. Use MUST, SHOULD, and MAY only when intentional.
+      placeholder: Describe client behavior, server behavior, messages, errors, and edge cases.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: compatibility
+    attributes:
+      label: Compatibility classification
+      description: Select the expected effect on existing conforming implementations.
+      options:
+        - Breaking
+        - Backward-compatible
+        - Editorial clarification
+        - Unsure; maintainer decision required
+    validations:
+      required: true
+
+  - type: textarea
+    id: affected-parties
+    attributes:
+      label: Affected implementations
+      description: Explain the impact on clients, servers, gateways, operators, and stored state.
+    validations:
+      required: true
+
+  - type: textarea
+    id: security
+    attributes:
+      label: Security and privacy impact
+      description: Address authentication, authorization, TLS, replay, validation, data exposure, and abuse risks. Write "None identified" only after considering them.
+    validations:
+      required: true
+
+  - type: textarea
+    id: operations
+    attributes:
+      label: Performance and operational impact
+      description: Address packet size, storage, connection stability, rate limits, deployment, and observability as applicable.
+    validations:
+      required: true
+
+  - type: textarea
+    id: migration
+    attributes:
+      label: Migration and rollout
+      description: Explain version changes, coexistence, deprecation, and how implementations migrate. Use "Not applicable" for a justified editorial change.
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+      description: List alternatives and why the proposal is preferable.
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Acceptance and validation criteria
+      description: Define examples, schemas, edge cases, and interoperability outcomes that prove completion.
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: confirmations
+    attributes:
+      label: Proposal checks
+      options:
+        - label: I searched existing issues and releases for this proposal.
+          required: true
+        - label: I understand published dated releases are immutable and implementation requires a new release.
+          required: true
+        - label: This issue does not publicly disclose an exploitable vulnerability or sensitive data.
+          required: true
+        - label: I agree to follow the repository's [Code of Conduct](https://github.com/pmh-only/spec/blob/main/CODE_OF_CONDUCT.md).
+          required: true

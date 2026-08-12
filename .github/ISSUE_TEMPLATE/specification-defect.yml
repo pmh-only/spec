@@ -1,0 +1,88 @@
+name: Specification defect or ambiguity
+description: Report contradictions, ambiguity, invalid artifacts, or missing interoperability details.
+title: "[Spec defect]: "
+labels:
+  - specification
+  - defect
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Cite exact documents and show how reasonable implementations can disagree. Security vulnerabilities must use private reporting.
+
+  - type: input
+    id: api
+    attributes:
+      label: API and release
+      placeholder: "rostack_v1, 2026-08-12"
+    validations:
+      required: true
+
+  - type: input
+    id: locations
+    attributes:
+      label: Affected files or sections
+      placeholder: "documents/websocket.md: Resumption and Delivery; websocket-message.schema.json"
+    validations:
+      required: true
+
+  - type: textarea
+    id: defect
+    attributes:
+      label: Defect
+      description: Quote or summarize the contradictory, ambiguous, incomplete, or invalid contract.
+    validations:
+      required: true
+
+  - type: textarea
+    id: interpretations
+    attributes:
+      label: Conflicting interpretations
+      description: Give at least two plausible interpretations or show the document/artifact mismatch.
+    validations:
+      required: true
+
+  - type: textarea
+    id: interoperability
+    attributes:
+      label: Interoperability impact
+      description: Explain observable failures or differences between clients and servers.
+    validations:
+      required: true
+
+  - type: textarea
+    id: suggested-resolution
+    attributes:
+      label: Suggested resolution
+      description: Optional. Describe the desired result without editing the published release in place.
+
+  - type: dropdown
+    id: behavior-change
+    attributes:
+      label: Would resolution change observable behavior?
+      options:
+        - "Yes"
+        - "No"
+        - Unsure; maintainer decision required
+    validations:
+      required: true
+
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence
+      description: Include minimal examples, validator output, or implementation observations with secrets removed.
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: confirmations
+    attributes:
+      label: Report checks
+      options:
+        - label: I checked the latest release and existing issues.
+          required: true
+        - label: This report contains no credentials, private endpoints, production data, or undisclosed vulnerability details.
+          required: true
+        - label: I agree to follow the repository's [Code of Conduct](https://github.com/pmh-only/spec/blob/main/CODE_OF_CONDUCT.md).
+          required: true
