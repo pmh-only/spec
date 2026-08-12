@@ -1,0 +1,56 @@
+asyncapi: 3.1.0
+info:
+  title: rostack_v1 WebSocket Gateway
+  version: 2026-08-12
+  description: Subscription gateway for implementation-defined resource events.
+servers:
+  production:
+    host: gateway.example.com
+    protocol: wss
+    pathname: /events
+    description: Replace with the gateway advertised in discovery.
+channels:
+  gateway:
+    address: /events
+    messages:
+      clientMessage:
+        $ref: "#/components/messages/ClientMessage"
+      serverMessage:
+        $ref: "#/components/messages/ServerMessage"
+operations:
+  sendCommand:
+    action: send
+    channel:
+      $ref: "#/channels/gateway"
+    messages:
+      - $ref: "#/channels/gateway/messages/clientMessage"
+  receiveEvent:
+    action: receive
+    channel:
+      $ref: "#/channels/gateway"
+    messages:
+      - $ref: "#/channels/gateway/messages/serverMessage"
+components:
+  messages:
+    ClientMessage:
+      name: ClientMessage
+      payload:
+        oneOf:
+          - $ref: "../schemas/websocket-message.schema.json#/$defs/authenticate"
+          - $ref: "../schemas/websocket-message.schema.json#/$defs/subscribe"
+          - $ref: "../schemas/websocket-message.schema.json#/$defs/unsubscribe"
+          - $ref: "../schemas/websocket-message.schema.json#/$defs/ping"
+          - $ref: "../schemas/websocket-message.schema.json#/$defs/pong"
+    ServerMessage:
+      name: ServerMessage
+      payload:
+        oneOf:
+          - $ref: "../schemas/websocket-message.schema.json#/$defs/authenticated"
+          - $ref: "../schemas/websocket-message.schema.json#/$defs/subscribed"
+          - $ref: "../schemas/websocket-message.schema.json#/$defs/replayComplete"
+          - $ref: "../schemas/websocket-message.schema.json#/$defs/event"
+          - $ref: "../schemas/websocket-message.schema.json#/$defs/compactEvent"
+          - $ref: "../schemas/websocket-message.schema.json#/$defs/error"
+          - $ref: "../schemas/websocket-message.schema.json#/$defs/goAway"
+          - $ref: "../schemas/websocket-message.schema.json#/$defs/ping"
+          - $ref: "../schemas/websocket-message.schema.json#/$defs/pong"

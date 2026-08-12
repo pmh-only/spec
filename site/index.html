@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Versioned API specifications and implementation contracts">
+    <meta name="theme-color" content="#12211b">
+    <title>API Specifications</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='12' fill='%2312211b'/%3E%3Cpath d='M16 18h32v7H16zm0 14h24v7H16zm0 14h32v7H16z' fill='%232dd4bf'/%3E%3C/svg%3E">
+    <link rel="stylesheet" href="assets/site.css">
+  </head>
+  <body>
+    <div id="app">Loading specifications...</div>
+    <script>
+      window.$docsify = {
+        name: 'API Specifications',
+        repo: '',
+        homepage: 'README.md',
+        loadSidebar: true,
+        alias: {
+          '/.*/_sidebar.md': '/_sidebar.md'
+        },
+        auto2top: true,
+        relativePath: false,
+        maxLevel: 4,
+        subMaxLevel: 2,
+        search: {
+          paths: 'auto',
+          placeholder: 'Search specifications',
+          noData: 'No matching document',
+          depth: 4
+        },
+        copyCode: {
+          buttonText: 'Copy',
+          errorText: 'Error',
+          successText: 'Copied'
+        }
+      };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/docsify@4/lib/docsify.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/docsify@4/lib/plugins/search.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/docsify-copy-code@3/dist/docsify-copy-code.min.js"></script>
+  </body>
+</html>

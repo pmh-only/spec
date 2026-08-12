@@ -1,0 +1,25 @@
+[
+  {
+    "type": "authenticated",
+    "method": "oauth2",
+    "protocol_version": "rostack_v1",
+    "api_version": "2026-08",
+    "principal_id": "service-monitor-7",
+    "reauthenticate_at": "2026-08-12T15:25:00Z"
+  },
+  {
+    "type": "ping",
+    "id": "heartbeat-42"
+  },
+  {
+    "type": "pong",
+    "id": "heartbeat-42"
+  },
+  {
+    "type": "go_away",
+    "reason": "planned_restart",
+    "reconnect_after_ms": 1000,
+    "drain_timeout_ms": 30000,
+    "gateway_url": "wss://gateway-2.example.com/v/2026-08/events"
+  }
+]

@@ -1,0 +1,103 @@
+{
+  "protocol": {
+    "name": "rostack",
+    "version": "rostack_v1"
+  },
+  "implementation": {
+    "id": "example-observatory",
+    "name": "Example Observatory",
+    "api_version": "2026-08",
+    "documentation_url": "https://api.example.com/docs"
+  },
+  "endpoints": {
+    "discovery": "https://api.example.com/.well-known/rostack",
+    "json_api": "https://api.example.com/v/2026-08",
+    "websocket": "wss://gateway.example.com/v/2026-08/events"
+  },
+  "authentication": {
+    "discovery_public": true,
+    "methods": [
+      {
+        "type": "oauth2",
+        "authorization_server_metadata": "https://auth.example.com/.well-known/oauth-authorization-server"
+      },
+      {
+        "type": "shared_token",
+        "http_authorization_scheme": "Rostack-Token",
+        "provisioning": "out_of_band",
+        "description": "Request a token from the observatory operator."
+      }
+    ],
+    "permissions": {
+      "observations:read": "Read observations",
+      "observations:subscribe": "Subscribe to observation events"
+    }
+  },
+  "capabilities": {
+    "filter_operators": ["eq", "ne", "gt", "gte", "lt", "lte", "in", "exists"],
+    "max_page_size": 500,
+    "websocket": {
+      "event_encodings": ["json", "compact-json"],
+      "extensions": ["permessage-deflate"],
+      "authentication_timeout_ms": 10000,
+      "heartbeat_interval_ms": 30000,
+      "heartbeat_timeout_ms": 10000,
+      "reconnect_min_delay_ms": 500,
+      "reconnect_max_delay_ms": 30000,
+      "discovery_refresh_after_ms": 300000
+    }
+  },
+  "resources": [
+    {
+      "name": "observations",
+      "description": "Measurements produced by this implementation.",
+      "collection_url": "https://api.example.com/v/2026-08/observations",
+      "item_url_template": "https://api.example.com/v/2026-08/observations/{id}",
+      "representations": [
+        {
+          "media_type": "application/json",
+          "schema_url": "https://api.example.com/v/2026-08/schemas/observation.json",
+          "schema_dialect": "https://json-schema.org/draft/2020-12/schema",
+          "description": "Native observation record."
+        }
+      ],
+      "events": [
+        {
+          "name": "observation.created",
+          "schema_url": "https://api.example.com/v/2026-08/schemas/observation-event.json",
+          "schema_dialect": "https://json-schema.org/draft/2020-12/schema",
+          "description": "An observation entered the selected data set.",
+          "state_transition": "create",
+          "tombstone": false
+        },
+        {
+          "name": "observation.updated",
+          "schema_url": "https://api.example.com/v/2026-08/schemas/observation-event.json",
+          "schema_dialect": "https://json-schema.org/draft/2020-12/schema",
+          "description": "An observation changed while remaining selected.",
+          "state_transition": "update",
+          "tombstone": false
+        },
+        {
+          "name": "observation.deleted",
+          "schema_url": "https://api.example.com/v/2026-08/schemas/observation-tombstone.json",
+          "schema_dialect": "https://json-schema.org/draft/2020-12/schema",
+          "description": "An observation left the selected data set.",
+          "state_transition": "delete",
+          "tombstone": true
+        }
+      ],
+      "event_filtering": true,
+      "filtering": {
+        "filterable_fields": {
+          "/station_id": ["eq", "in"],
+          "/observed_at": ["gt", "gte", "lt", "lte"],
+          "/quality/verified": ["eq", "exists"]
+        },
+        "sortable_fields": ["/observed_at", "/station_id"]
+      },
+      "read_permissions": ["observations:read"],
+      "subscribe_permissions": ["observations:subscribe"]
+    }
+  ]
+}
