@@ -8,8 +8,8 @@ operations.
 
 Clients send an `Accept` header using a media type advertised for the resource.
 Every implementation MUST offer at least one `application/json` representation.
-The response `Content-Type` MUST identify the selected representation. A `406`
-problem response is returned when none is acceptable.
+The response `Content-Type` MUST identify the selected representation. A
+`representation-not-acceptable` problem is returned when none is acceptable.
 
 Domain data MAY have any JSON shape allowed by its advertised schema. Collection
 responses use this standard envelope:
@@ -50,9 +50,16 @@ envelope. It SHOULD include an `ETag`; clients MAY use `If-None-Match`.
 - `limit`: positive page size no greater than the discovered maximum.
 - `cursor`: opaque continuation token returned by the server.
 
-Servers MUST reject unsupported fields or operators with a `400` problem
-response rather than silently ignoring them. Cursors are opaque, scoped to the
+Servers MUST reject unsupported fields or operators with an `unsupported-filter`
+problem rather than silently ignoring them. Invalid filter syntax uses
+`invalid-filter`. Cursors are opaque, scoped to the
 original resource and query, and MUST NOT be modified by clients.
+
+Every implementation-generated error response MUST conform to [`errors.md`](errors.md) and
+`../schemas/problem.schema.json`. The response type MUST be advertised in
+discovery. Implementations MUST NOT substitute an implementation-defined problem
+type. A disallowed mutation method uses `method-not-allowed`. A conditional GET
+MAY return `304 Not Modified` without a problem object.
 
 Successful responses SHOULD include `X-Rostack-Protocol-Version: rostack_v1` and
 MUST include `X-Rostack-API-Version` with the implementation API version from

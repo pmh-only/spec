@@ -22,12 +22,13 @@ read-only discovery and transport contract. It does not prescribe domain fields.
   operations as part of `rostack_v1`.
 - Every available resource and representation MUST appear in discovery.
 - Each representation MUST declare its media type and a retrievable schema URL.
-- Undocumented domain fields MAY be returned only when the referenced schema
-  permits them.
+- Every implementation-owned resource and event payload MUST be completely
+  described by its referenced schema. Undeclared object properties are forbidden.
 - Clients MUST treat resource data as implementation-defined and MUST NOT infer
   a representation from its resource name.
 
 ## Standard Error
 
-Non-success HTTP responses use `application/problem+json` as defined by RFC
-9457. Implementations SHOULD include `request_id` as an extension member.
+Non-success HTTP responses use the closed registry and schema in
+[`errors.md`](errors.md). Implementations MUST advertise every error they can
+return and MUST NOT define additional protocol error types or codes.

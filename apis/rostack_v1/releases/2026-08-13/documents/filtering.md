@@ -2,7 +2,8 @@
 
 The `filter` query parameter is a percent-encoded JSON object conforming to
 `../schemas/filter.schema.json`. Field names are RFC 6901 JSON Pointers into a
-resource representation. Values are JSON literals and retain their JSON types.
+resource representation. Operands are JSON scalars or arrays of JSON scalars and
+retain their JSON types. Object operands and nested arrays are not allowed.
 
 ## Operators
 
