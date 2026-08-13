@@ -47,6 +47,42 @@
       "discovery_refresh_after_ms": 300000
     }
   },
+  "errors": {
+    "http": [
+      {"type": "https://spec.pmh.codes/problems/invalid-request", "operations": ["list", "get"]},
+      {"type": "https://spec.pmh.codes/problems/invalid-filter", "operations": ["list"]},
+      {"type": "https://spec.pmh.codes/problems/unsupported-filter", "operations": ["list"]},
+      {"type": "https://spec.pmh.codes/problems/invalid-sort", "operations": ["list"]},
+      {"type": "https://spec.pmh.codes/problems/invalid-fields", "operations": ["list", "get"]},
+      {"type": "https://spec.pmh.codes/problems/invalid-cursor", "operations": ["list"]},
+      {"type": "https://spec.pmh.codes/problems/authentication-required", "operations": ["list", "get"]},
+      {"type": "https://spec.pmh.codes/problems/permission-denied", "operations": ["list", "get"]},
+      {"type": "https://spec.pmh.codes/problems/resource-not-found", "operations": ["get"]},
+      {"type": "https://spec.pmh.codes/problems/method-not-allowed", "operations": ["list", "get"]},
+      {"type": "https://spec.pmh.codes/problems/representation-not-acceptable", "operations": ["list", "get"]},
+      {"type": "https://spec.pmh.codes/problems/resource-gone", "operations": ["get"]},
+      {"type": "https://spec.pmh.codes/problems/rate-limited", "operations": ["discovery", "list", "get"]},
+      {"type": "https://spec.pmh.codes/problems/internal-error", "operations": ["discovery", "list", "get"]},
+      {"type": "https://spec.pmh.codes/problems/service-unavailable", "operations": ["discovery", "list", "get"]}
+    ],
+    "websocket": [
+      {"code": "invalid_message", "operations": ["session"]},
+      {"code": "authentication_failed", "operations": ["authenticate"]},
+      {"code": "reauthentication_identity_mismatch", "operations": ["authenticate"]},
+      {"code": "permission_denied", "operations": ["subscribe"]},
+      {"code": "permission_revoked", "operations": ["subscription"]},
+      {"code": "resource_not_found", "operations": ["subscribe"]},
+      {"code": "unsupported_event_type", "operations": ["subscribe"]},
+      {"code": "unsupported_filter", "operations": ["subscribe"]},
+      {"code": "unsupported_encoding", "operations": ["subscribe"]},
+      {"code": "subscription_id_conflict", "operations": ["subscribe"]},
+      {"code": "cursor_scope_mismatch", "operations": ["subscribe"]},
+      {"code": "cursor_unavailable", "operations": ["subscribe"]},
+      {"code": "rate_limited", "operations": ["authenticate", "subscribe", "session"]},
+      {"code": "internal_error", "operations": ["authenticate", "subscribe", "subscription", "session"]},
+      {"code": "service_unavailable", "operations": ["authenticate", "subscribe", "subscription", "session"]}
+    ]
+  },
   "resources": [
     {
       "name": "observations",

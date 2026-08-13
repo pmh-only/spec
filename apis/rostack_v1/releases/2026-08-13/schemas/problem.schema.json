@@ -1,0 +1,94 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://spec.pmh.codes/apis/rostack_v1/releases/2026-08-13/schemas/problem.schema.json",
+  "title": "rostack_v1 HTTP problem",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["type", "title", "status"],
+  "properties": {
+    "type": {
+      "enum": [
+        "https://spec.pmh.codes/problems/invalid-request",
+        "https://spec.pmh.codes/problems/invalid-filter",
+        "https://spec.pmh.codes/problems/unsupported-filter",
+        "https://spec.pmh.codes/problems/invalid-sort",
+        "https://spec.pmh.codes/problems/invalid-fields",
+        "https://spec.pmh.codes/problems/invalid-cursor",
+        "https://spec.pmh.codes/problems/authentication-required",
+        "https://spec.pmh.codes/problems/permission-denied",
+        "https://spec.pmh.codes/problems/resource-not-found",
+        "https://spec.pmh.codes/problems/method-not-allowed",
+        "https://spec.pmh.codes/problems/representation-not-acceptable",
+        "https://spec.pmh.codes/problems/resource-gone",
+        "https://spec.pmh.codes/problems/rate-limited",
+        "https://spec.pmh.codes/problems/internal-error",
+        "https://spec.pmh.codes/problems/service-unavailable"
+      ]
+    },
+    "title": {
+      "enum": [
+        "Invalid request",
+        "Invalid filter",
+        "Unsupported filter",
+        "Invalid sort",
+        "Invalid fields",
+        "Invalid cursor",
+        "Authentication required",
+        "Permission denied",
+        "Resource not found",
+        "Method not allowed",
+        "Representation not acceptable",
+        "Resource gone",
+        "Rate limited",
+        "Internal error",
+        "Service unavailable"
+      ]
+    },
+    "status": {"enum": [400, 401, 403, 404, 405, 406, 410, 429, 500, 503]},
+    "detail": {"type": "string"},
+    "instance": {"type": "string", "format": "uri-reference"},
+    "request_id": {"type": "string", "minLength": 1},
+    "retry_after_ms": {"type": "integer", "minimum": 0}
+  },
+  "allOf": [
+    {
+      "oneOf": [
+        {"properties": {"type": {"const": "https://spec.pmh.codes/problems/invalid-request"}, "title": {"const": "Invalid request"}, "status": {"const": 400}}},
+        {"properties": {"type": {"const": "https://spec.pmh.codes/problems/invalid-filter"}, "title": {"const": "Invalid filter"}, "status": {"const": 400}}},
+        {"properties": {"type": {"const": "https://spec.pmh.codes/problems/unsupported-filter"}, "title": {"const": "Unsupported filter"}, "status": {"const": 400}}},
+        {"properties": {"type": {"const": "https://spec.pmh.codes/problems/invalid-sort"}, "title": {"const": "Invalid sort"}, "status": {"const": 400}}},
+        {"properties": {"type": {"const": "https://spec.pmh.codes/problems/invalid-fields"}, "title": {"const": "Invalid fields"}, "status": {"const": 400}}},
+        {"properties": {"type": {"const": "https://spec.pmh.codes/problems/invalid-cursor"}, "title": {"const": "Invalid cursor"}, "status": {"const": 400}}},
+        {"properties": {"type": {"const": "https://spec.pmh.codes/problems/authentication-required"}, "title": {"const": "Authentication required"}, "status": {"const": 401}}},
+        {"properties": {"type": {"const": "https://spec.pmh.codes/problems/permission-denied"}, "title": {"const": "Permission denied"}, "status": {"const": 403}}},
+        {"properties": {"type": {"const": "https://spec.pmh.codes/problems/resource-not-found"}, "title": {"const": "Resource not found"}, "status": {"const": 404}}},
+        {"properties": {"type": {"const": "https://spec.pmh.codes/problems/method-not-allowed"}, "title": {"const": "Method not allowed"}, "status": {"const": 405}}},
+        {"properties": {"type": {"const": "https://spec.pmh.codes/problems/representation-not-acceptable"}, "title": {"const": "Representation not acceptable"}, "status": {"const": 406}}},
+        {"properties": {"type": {"const": "https://spec.pmh.codes/problems/resource-gone"}, "title": {"const": "Resource gone"}, "status": {"const": 410}}},
+        {"properties": {"type": {"const": "https://spec.pmh.codes/problems/rate-limited"}, "title": {"const": "Rate limited"}, "status": {"const": 429}}},
+        {"properties": {"type": {"const": "https://spec.pmh.codes/problems/internal-error"}, "title": {"const": "Internal error"}, "status": {"const": 500}}},
+        {"properties": {"type": {"const": "https://spec.pmh.codes/problems/service-unavailable"}, "title": {"const": "Service unavailable"}, "status": {"const": 503}}}
+      ]
+    },
+    {
+      "if": {
+        "properties": {
+          "type": {
+            "enum": [
+              "https://spec.pmh.codes/problems/rate-limited",
+              "https://spec.pmh.codes/problems/service-unavailable"
+            ]
+          }
+        },
+        "required": ["type"]
+      },
+      "then": {
+        "properties": {"retry_after_ms": {"type": "integer", "minimum": 0}},
+        "required": ["retry_after_ms"]
+      },
+      "else": {
+        "properties": {"retry_after_ms": false}
+      }
+    }
+  ]
+}

@@ -143,6 +143,11 @@ The following application close codes are reserved:
 - `4429`: rate limit; reconnect no earlier than the supplied retry delay.
 - `4500`: transient server error.
 
+Close codes describe connection termination and are distinct from error-message
+codes. Every `error` message MUST use an advertised registry code and satisfy the
+requirements in [`errors.md`](errors.md). Implementations MUST NOT define
+additional WebSocket error codes.
+
 ## Resumption and Delivery
 
 Clients MAY include the last processed cursor in `subscribe`. A cursor is an

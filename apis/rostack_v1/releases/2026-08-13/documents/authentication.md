@@ -29,7 +29,8 @@ individually revocable, SHOULD have an expiration, and SHOULD be scoped to the
 minimum required permissions. Implementations MUST store tokens using a secure
 one-way verifier or equivalent secrets-management control rather than plaintext.
 
-HTTP clients use the case-sensitive `Rostack-Token` authorization scheme:
+HTTP clients use the `Rostack-Token` authorization scheme. As required by HTTP,
+authentication scheme matching is case-insensitive:
 
 ```http
 Authorization: Rostack-Token SHARED_TOKEN
@@ -41,11 +42,12 @@ client access is required.
 
 ## HTTP Failures
 
-Servers return `401` with the challenge matching an enabled method for missing,
-expired, revoked, or invalid credentials. Examples are
+Servers return the `authentication-required` problem with `401` and the challenge
+matching an enabled method for missing, expired, revoked, or invalid credentials. Examples are
 `WWW-Authenticate: Bearer` and `WWW-Authenticate: Rostack-Token`. A server
 supporting both methods SHOULD send both challenges as separate header fields.
-It returns `403` when valid credentials lack a required permission.
+It returns the `permission-denied` problem with `403` when valid credentials lack
+a required permission.
 
 Discovery MAY be public. If protected, bootstrap information for at least one
 supported authentication method MUST be supplied out of band.

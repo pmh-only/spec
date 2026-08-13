@@ -32,7 +32,7 @@ paths:
               schema:
                 $ref: ../schemas/discovery.schema.json
         "401":
-          $ref: "#/components/responses/Problem"
+          $ref: "#/components/responses/AuthenticationRequired"
   /{resource}:
     get:
       summary: List records from a discovered resource
@@ -65,13 +65,19 @@ paths:
               schema:
                 $ref: "#/components/schemas/Collection"
         "400":
-          $ref: "#/components/responses/Problem"
+          $ref: "#/components/responses/InvalidRequest"
         "401":
-          $ref: "#/components/responses/Problem"
+          $ref: "#/components/responses/AuthenticationRequired"
         "403":
-          $ref: "#/components/responses/Problem"
+          $ref: "#/components/responses/PermissionDenied"
         "406":
-          $ref: "#/components/responses/Problem"
+          $ref: "#/components/responses/RepresentationNotAcceptable"
+        "429":
+          $ref: "#/components/responses/RateLimited"
+        "500":
+          $ref: "#/components/responses/InternalError"
+        "503":
+          $ref: "#/components/responses/ServiceUnavailable"
   /{resource}/{id}:
     get:
       summary: Retrieve one record from a discovered resource
@@ -107,11 +113,21 @@ paths:
             application/json:
               schema: {}
         "401":
-          $ref: "#/components/responses/Problem"
+          $ref: "#/components/responses/AuthenticationRequired"
         "403":
-          $ref: "#/components/responses/Problem"
+          $ref: "#/components/responses/PermissionDenied"
         "404":
-          $ref: "#/components/responses/Problem"
+          $ref: "#/components/responses/ResourceNotFound"
+        "410":
+          $ref: "#/components/responses/ResourceGone"
+        "406":
+          $ref: "#/components/responses/RepresentationNotAcceptable"
+        "429":
+          $ref: "#/components/responses/RateLimited"
+        "500":
+          $ref: "#/components/responses/InternalError"
+        "503":
+          $ref: "#/components/responses/ServiceUnavailable"
 components:
   securitySchemes:
     oauth2:
@@ -165,12 +181,64 @@ components:
       schema:
         type: string
   responses:
-    Problem:
-      description: Problem details
+    InvalidRequest:
+      description: Invalid request, filter, sort, fields, or cursor
       content:
         application/problem+json:
           schema:
-            $ref: "#/components/schemas/Problem"
+            $ref: ../schemas/problem.schema.json
+    AuthenticationRequired:
+      description: Authentication is missing or invalid
+      headers:
+        WWW-Authenticate:
+          schema:
+            type: string
+      content:
+        application/problem+json:
+          schema:
+            $ref: ../schemas/problem.schema.json
+    PermissionDenied:
+      description: Valid credentials lack a required permission
+      content:
+        application/problem+json:
+          schema:
+            $ref: ../schemas/problem.schema.json
+    ResourceNotFound:
+      description: Resource is absent or not visible
+      content:
+        application/problem+json:
+          schema:
+            $ref: ../schemas/problem.schema.json
+    ResourceGone:
+      description: Deleted event detail is permanently unavailable
+      content:
+        application/problem+json:
+          schema:
+            $ref: ../schemas/problem.schema.json
+    RepresentationNotAcceptable:
+      description: No advertised representation is acceptable
+      content:
+        application/problem+json:
+          schema:
+            $ref: ../schemas/problem.schema.json
+    RateLimited:
+      description: Request rate is limited
+      content:
+        application/problem+json:
+          schema:
+            $ref: ../schemas/problem.schema.json
+    InternalError:
+      description: Unexpected server failure
+      content:
+        application/problem+json:
+          schema:
+            $ref: ../schemas/problem.schema.json
+    ServiceUnavailable:
+      description: Transient server or dependency failure
+      content:
+        application/problem+json:
+          schema:
+            $ref: ../schemas/problem.schema.json
   schemas:
     Collection:
       type: object
@@ -194,23 +262,3 @@ components:
               description: >-
                 Exclusive, resource-wide event boundary for this consistent
                 snapshot. Required for resources that advertise events.
-    Problem:
-      type: object
-      required: [type, title, status]
-      properties:
-        type:
-          type: string
-          format: uri-reference
-        title:
-          type: string
-        status:
-          type: integer
-          minimum: 100
-          maximum: 599
-        detail:
-          type: string
-        instance:
-          type: string
-          format: uri-reference
-        request_id:
-          type: string

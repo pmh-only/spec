@@ -1,0 +1,8 @@
+{
+  "type": "https://spec.pmh.codes/problems/rate-limited",
+  "title": "Rate limited",
+  "status": 429,
+  "detail": "Retry after the advertised delay.",
+  "request_id": "req-7f3c",
+  "retry_after_ms": 5000
+}

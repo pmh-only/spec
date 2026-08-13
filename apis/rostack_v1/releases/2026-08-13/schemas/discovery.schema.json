@@ -4,7 +4,7 @@
   "title": "rostack_v1 discovery document",
   "type": "object",
   "additionalProperties": false,
-  "required": ["protocol", "implementation", "endpoints", "authentication", "capabilities", "resources"],
+  "required": ["protocol", "implementation", "endpoints", "authentication", "capabilities", "errors", "resources"],
   "properties": {
     "protocol": {
       "type": "object",
@@ -18,7 +18,7 @@
     "implementation": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["id", "name", "api_version"],
+      "required": ["id", "name", "api_version", "documentation_url"],
       "properties": {
         "id": {"type": "string", "minLength": 1},
         "name": {"type": "string", "minLength": 1},
@@ -56,7 +56,9 @@
         "permissions": {
           "type": "object",
           "minProperties": 1,
-          "additionalProperties": {"type": "string"}
+          "propertyNames": {"pattern": "^[a-z][a-z0-9-]*:[a-z][a-z0-9-]*$"},
+          "patternProperties": {"^": {"type": "string", "minLength": 1}},
+          "unevaluatedProperties": false
         }
       }
     },
@@ -98,6 +100,25 @@
         }
       }
     },
+    "errors": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["http", "websocket"],
+      "properties": {
+        "http": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/httpErrorDeclaration"}
+        },
+        "websocket": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/websocketErrorDeclaration"}
+        }
+      }
+    },
     "resources": {
       "type": "array",
       "minItems": 1,
@@ -117,6 +138,72 @@
     }
   },
   "$defs": {
+    "httpProblemType": {
+      "enum": [
+        "https://spec.pmh.codes/problems/invalid-request",
+        "https://spec.pmh.codes/problems/invalid-filter",
+        "https://spec.pmh.codes/problems/unsupported-filter",
+        "https://spec.pmh.codes/problems/invalid-sort",
+        "https://spec.pmh.codes/problems/invalid-fields",
+        "https://spec.pmh.codes/problems/invalid-cursor",
+        "https://spec.pmh.codes/problems/authentication-required",
+        "https://spec.pmh.codes/problems/permission-denied",
+        "https://spec.pmh.codes/problems/resource-not-found",
+        "https://spec.pmh.codes/problems/method-not-allowed",
+        "https://spec.pmh.codes/problems/representation-not-acceptable",
+        "https://spec.pmh.codes/problems/resource-gone",
+        "https://spec.pmh.codes/problems/rate-limited",
+        "https://spec.pmh.codes/problems/internal-error",
+        "https://spec.pmh.codes/problems/service-unavailable"
+      ]
+    },
+    "httpErrorDeclaration": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "operations"],
+      "properties": {
+        "type": {"$ref": "#/$defs/httpProblemType"},
+        "operations": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"enum": ["discovery", "list", "get"]}
+        }
+      }
+    },
+    "websocketErrorCode": {
+      "enum": [
+        "invalid_message",
+        "authentication_failed",
+        "reauthentication_identity_mismatch",
+        "permission_denied",
+        "permission_revoked",
+        "resource_not_found",
+        "unsupported_event_type",
+        "unsupported_filter",
+        "unsupported_encoding",
+        "subscription_id_conflict",
+        "cursor_scope_mismatch",
+        "cursor_unavailable",
+        "rate_limited",
+        "internal_error",
+        "service_unavailable"
+      ]
+    },
+    "websocketErrorDeclaration": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["code", "operations"],
+      "properties": {
+        "code": {"$ref": "#/$defs/websocketErrorCode"},
+        "operations": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"enum": ["authenticate", "subscribe", "subscription", "session"]}
+        }
+      }
+    },
     "oauth2Authentication": {
       "type": "object",
       "additionalProperties": false,
@@ -178,7 +265,7 @@
       "properties": {
         "name": {"type": "string", "pattern": "^[a-z][a-z0-9.-]*$"},
         "schema_url": {"type": "string", "format": "uri", "pattern": "^https://"},
-        "schema_dialect": {"type": "string", "format": "uri"},
+        "schema_dialect": {"const": "https://json-schema.org/draft/2020-12/schema"},
         "description": {"type": "string"},
         "state_transition": {"enum": ["create", "update", "delete"]},
         "tombstone": {"type": "boolean", "default": false}
@@ -191,7 +278,7 @@
       "properties": {
         "media_type": {"type": "string", "pattern": "^[^/ ]+/[^/ ]+$"},
         "schema_url": {"type": "string", "format": "uri", "pattern": "^https://"},
-        "schema_dialect": {"type": "string", "format": "uri"},
+        "schema_dialect": {"const": "https://json-schema.org/draft/2020-12/schema"},
         "description": {"type": "string"}
       }
     },
@@ -202,13 +289,15 @@
       "properties": {
         "filterable_fields": {
           "type": "object",
-          "additionalProperties": {
-            "type": "array",
-            "minItems": 1,
-            "uniqueItems": true,
-            "items": {"enum": ["eq", "ne", "gt", "gte", "lt", "lte", "in", "nin", "contains", "starts_with", "ends_with", "exists"]}
+          "patternProperties": {
+            "^/": {
+              "type": "array",
+              "minItems": 1,
+              "uniqueItems": true,
+              "items": {"enum": ["eq", "ne", "gt", "gte", "lt", "lte", "in", "nin", "contains", "starts_with", "ends_with", "exists"]}
+            }
           },
-          "propertyNames": {"pattern": "^/"}
+          "unevaluatedProperties": false
         },
         "sortable_fields": {
           "type": "array",

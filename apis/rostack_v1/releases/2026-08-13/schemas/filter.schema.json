@@ -4,8 +4,19 @@
   "title": "rostack_v1 filter",
   "$ref": "#/$defs/expression",
   "$defs": {
+    "jsonScalar": {
+      "oneOf": [
+        {"type": "null"},
+        {"type": "boolean"},
+        {"type": "number"},
+        {"type": "string"}
+      ]
+    },
     "jsonValue": {
-      "type": ["null", "boolean", "number", "string", "array", "object"]
+      "oneOf": [
+        {"$ref": "#/$defs/jsonScalar"},
+        {"type": "array", "items": {"$ref": "#/$defs/jsonScalar"}}
+      ]
     },
     "fieldPredicate": {
       "type": "object",
@@ -18,8 +29,8 @@
         "gte": {"$ref": "#/$defs/jsonValue"},
         "lt": {"$ref": "#/$defs/jsonValue"},
         "lte": {"$ref": "#/$defs/jsonValue"},
-        "in": {"type": "array"},
-        "nin": {"type": "array"},
+        "in": {"type": "array", "items": {"$ref": "#/$defs/jsonScalar"}},
+        "nin": {"type": "array", "items": {"$ref": "#/$defs/jsonScalar"}},
         "contains": {"$ref": "#/$defs/jsonValue"},
         "starts_with": {"type": "string"},
         "ends_with": {"type": "string"},
@@ -29,12 +40,6 @@
     "expression": {
       "type": "object",
       "minProperties": 1,
-      "propertyNames": {
-        "anyOf": [
-          {"enum": ["$and", "$or", "$not"]},
-          {"type": "string", "pattern": "^/"}
-        ]
-      },
       "properties": {
         "$and": {
           "type": "array",
@@ -48,7 +53,10 @@
         },
         "$not": {"$ref": "#/$defs/expression"}
       },
-      "additionalProperties": {"$ref": "#/$defs/fieldPredicate"}
+      "patternProperties": {
+        "^/": {"$ref": "#/$defs/fieldPredicate"}
+      },
+      "unevaluatedProperties": false
     }
   }
 }

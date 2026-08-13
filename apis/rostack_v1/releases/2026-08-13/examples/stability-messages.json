@@ -16,6 +16,13 @@
     "id": "heartbeat-42"
   },
   {
+    "type": "error",
+    "subscription_id": "sub-1",
+    "code": "cursor_unavailable",
+    "message": "The retained event history no longer includes this cursor.",
+    "retryable": false
+  },
+  {
     "type": "go_away",
     "reason": "planned_restart",
     "reconnect_after_ms": 1000,
